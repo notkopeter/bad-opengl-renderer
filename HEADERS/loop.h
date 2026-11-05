@@ -5,17 +5,25 @@
 #include <vector>
 #include "GLTools.h"
 
-inline void runLoop(GLFWwindow* window, GLuint texture)
+float dt;
+float lastTime = 0; 
+
+inline void runLoop(GLFWwindow* window, GLuint shaderProgram, GLuint texture)
 {
+    dt = glfwGetTime() - lastTime;
+    lastTime = glfwGetTime();
+
+
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 
-    // textures
+    glUseProgram(shaderProgram);
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, texture);
 
-    drawMeshes();
+    rotateMesh(objects[0], 90.0f * dt, glm::vec3(0, 1, 0));
 
+    drawMeshes(shaderProgram);
 
     glfwSwapBuffers(window);
     glfwPollEvents();

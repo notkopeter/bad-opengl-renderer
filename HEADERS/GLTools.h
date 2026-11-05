@@ -5,6 +5,11 @@
 #include <iostream>
 #include <cstdlib>
 #include <stb/stb_image.h>
+#include <glm/glm.hpp>
+#include <glm/ext/matrix_clip_space.hpp>
+#include <glm/trigonometric.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 #include "settings.h"
 #include "objectTable.h"
 
@@ -14,6 +19,7 @@ struct Mesh
     GLuint  VBO = 0;
     GLuint  EBO = 0;
     GLsizei indexCount = 0;
+    glm::mat4 model = glm::mat4(1.0f);
 };
 
 inline std::vector<Mesh> objects;
@@ -82,15 +88,17 @@ inline Mesh createMesh(const MeshData& data)
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
     return m;
 }
-inline void drawMesh(const Mesh& m)
+inline void drawMesh(const Mesh& m, GLint modelLoc)
 {
+    glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(m.model));
     glBindVertexArray(m.VAO);
     glDrawElements(GL_TRIANGLES, m.indexCount, GL_UNSIGNED_INT, 0);
 }
-inline void drawMeshes()
+inline void drawMeshes(GLuint shaderProgram)
 {
+    GLint modelLoc = glGetUniformLocation(shaderProgram, "model");
     for (const Mesh& m : objects)
-        drawMesh(m);
+        drawMesh(m, modelLoc);
 }
 inline void destroyMesh(Mesh& m)
 {
@@ -135,4 +143,32 @@ inline GLuint assignTextures(GLuint shaderProgram)
     glUniform1i(glGetUniformLocation(shaderProgram, "tex0"), 0);
 
     return texture;
+}
+inline void genMatrices(GLuint shaderProgram)
+{
+    glm::mat4 model = glm::mat4(1.0f);
+    glm::mat4 view = glm::mat4(1.0f);
+    glm::mat4 proj = glm::mat4(1.0f);
+    view = glm::translate(view, glm::vec3(00.0f, 0.0f, -2.5f));
+    proj = glm::perspective(glm::radians(FOV), (WIDTH/HEIGHT), 0.05f, 100.0f);
+    
+    glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "model"), 1, GL_FALSE, glm::value_ptr(model));
+    glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "view"), 1, GL_FALSE, glm::value_ptr(view));
+    glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "proj"), 1, GL_FALSE, glm::value_ptr(proj));
+}
+inline void translateMesh(Mesh& m, const glm::vec3& offset)
+{
+    m.model = glm::translate(m.model, offset);
+}
+inline void rotateMesh(Mesh& m, float degrees, const glm::vec3& axis)
+{
+    m.model = glm::rotate(m.model, glm::radians(degrees), axis);
+}
+inline void scaleMesh(Mesh& m, const glm::vec3& factors)
+{
+    m.model = glm::scale(m.model, factors);
+}
+inline void resetMesh(Mesh& m)
+{
+    m.model = glm::mat4(1.0f);
 }
