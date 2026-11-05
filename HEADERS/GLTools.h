@@ -142,6 +142,8 @@ inline GLuint assignTextures(GLuint shaderProgram)
     glUseProgram(shaderProgram);
     glUniform1i(glGetUniformLocation(shaderProgram, "tex0"), 0);
 
+    glEnable(GL_DEPTH_TEST);
+
     return texture;
 }
 inline void genMatrices(GLuint shaderProgram)
