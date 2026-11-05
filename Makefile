@@ -1,11 +1,9 @@
-# ---- Project ----
-TARGET   := engine
+TARGET   := main
 BUILD    := build
 
 CC       := gcc
 CXX      := g++
 
-# ---- Sources ----
 SRC_DIR  := SRC
 CPP_SRCS := $(wildcard $(SRC_DIR)/*.cpp)
 C_SRCS   := $(wildcard $(SRC_DIR)/*.c)
