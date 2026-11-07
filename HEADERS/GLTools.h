@@ -31,6 +31,8 @@ inline void GLInit()
     gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
     glViewport(0, 0, WIDTH, HEIGHT);
     glfwSwapInterval(0);
+    glEnable(GL_DEPTH_TEST);
+
 }
 inline GLuint createShader(const char* vertex_shader, const char* fragment_shader)
 {
@@ -143,8 +145,6 @@ inline GLuint assignTextures(GLuint shaderProgram)
 
     glUseProgram(shaderProgram);
     glUniform1i(glGetUniformLocation(shaderProgram, "tex0"), 0);
-
-    glEnable(GL_DEPTH_TEST);
 
     return texture;
 }
