@@ -3,6 +3,7 @@
 #include "GLTools.h"
 #include "default-shaders.h"
 #include "loop.h"
+#include "camera.h"
 
 int main()
 {   
@@ -11,10 +12,8 @@ int main()
     GLuint shaderProgram = createShader(default_vert, default_frag);
     objects.push_back(createMesh(cube));
     GLuint texture = assignTextures(shaderProgram);
-    genMatrices(shaderProgram);
 
     scaleMesh(objects[0], glm::vec3(0.5f));
-    translateMesh(objects[1], glm::vec3(1.0f, 0.0f, 0.0f));
 
     while(!glfwWindowShouldClose(window))
         runLoop(window,shaderProgram , texture);

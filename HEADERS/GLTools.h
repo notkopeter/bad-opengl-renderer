@@ -12,6 +12,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include "settings.h"
 #include "objectTable.h"
+#include "camera.h"
 
 struct Mesh
 {
@@ -23,6 +24,7 @@ struct Mesh
 };
 
 inline std::vector<Mesh> objects;
+inline Camera camera(WIDTH, HEIGHT, glm::vec3(0.0f, 0.0f, 2.5f));
 
 inline void GLInit()
 {
@@ -146,17 +148,11 @@ inline GLuint assignTextures(GLuint shaderProgram)
 
     return texture;
 }
-inline void genMatrices(GLuint shaderProgram)
+inline void updateCamera(GLFWwindow* window, GLuint shaderProgram)
 {
-    glm::mat4 model = glm::mat4(1.0f);
-    glm::mat4 view = glm::mat4(1.0f);
-    glm::mat4 proj = glm::mat4(1.0f);
-    view = glm::translate(view, glm::vec3(00.0f, 0.0f, -2.5f));
-    proj = glm::perspective(glm::radians(FOV), (WIDTH/HEIGHT), 0.05f, 100.0f);
-    
-    glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "model"), 1, GL_FALSE, glm::value_ptr(model));
-    glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "view"), 1, GL_FALSE, glm::value_ptr(view));
-    glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "proj"), 1, GL_FALSE, glm::value_ptr(proj));
+    glUseProgram(shaderProgram);
+    camera.Inputs(window);
+    camera.Matrix(FOV, 0.05f, 100.0f, shaderProgram, "camMatrix");
 }
 inline void translateMesh(Mesh& m, const glm::vec3& offset)
 {

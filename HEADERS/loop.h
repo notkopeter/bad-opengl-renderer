@@ -13,11 +13,11 @@ inline void runLoop(GLFWwindow* window, GLuint shaderProgram, GLuint texture)
     dt = glfwGetTime() - lastTime;
     lastTime = glfwGetTime();
 
-
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    glUseProgram(shaderProgram);
+    updateCamera(window, shaderProgram);
+
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, texture);
 
